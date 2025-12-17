@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="/src/style/main.css">
+    <title>Fake ATM</title>
+</head>
+
+<body>
+    <div class="container">
+        <div class="atm-wrapper">
+            <div id="atm-machine"></div>
+        </div>
+
+        <div class="card-generator">
+            <h2>Generate Your Bank Card</h2>
+
+            <div class="card-preview">
+                <h3>Card Preview</h3>
+                <canvas id="cardCanvas" width="400" height="250"></canvas>
+                <div id="cardInfo" style="margin-top: 15px; font-size: 14px; color: #666;"></div>
+            </div>
+
+            <form id="cardForm">
+                <div class="form-group">
+                    <label for="cardholderName">Cardholder Name</label>
+                    <input type="text" id="cardholderName" placeholder="JOHN DOE" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="cardNumber">Card Number</label>
+                    <input type="text" id="cardNumber" placeholder="1234 5678 9012 3456" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="expiryDate">Expiry Date (MM/YY)</label>
+                    <input type="text" id="expiryDate" placeholder="12/25" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="cvv">CVV</label>
+                    <input type="text" id="cvv" placeholder="123" required maxlength="3">
+                </div>
+
+                <div class="form-group">
+                    <label for="bankName">Bank Name</label>
+                    <select id="bankName">
+                        <option value="Fake Bank Premium">Fake Bank Premium</option>
+                        <option value="Global Bank Elite">Global Bank Elite</option>
+                        <option value="Secure Financial">Secure Financial</option>
+                        <option value="Prime Trust Bank">Prime Trust Bank</option>
+                        <option value="Digital Finance Corp">Digital Finance Corp</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="cardType">Card Type</label>
+                    <select id="cardType">
+                        <option value="visa">Visa</option>
+                        <option value="mastercard">MasterCard</option>
+                        <option value="amex">American Express</option>
+                        <option value="discover">Discover</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="cardColor">Card Color Theme</label>
+                    <select id="cardColor">
+                        <option value="gradient-blue">Blue Gradient</option>
+                        <option value="gradient-gold">Gold Gradient</option>
+                        <option value="gradient-silver">Silver Gradient</option>
+                        <option value="gradient-black">Black Gradient</option>
+                        <option value="gradient-purple">Purple Gradient</option>
+                    </select>
+                </div>
+
+                <button type="button" class="btn" onclick="generateCard()">Generate Card</button>
+                <button type="button" class="btn" onclick="downloadCard()"
+                    style="background: linear-gradient(to right, #4CAF50, #45a049);">Download Card Image</button>
+            </form>
+
+            <div class="card-slot">
+                <label>Insert Card into ATM:</label>
+                <button class="btn" onclick="insertCardIntoATM()">Insert Card into ATM</button>
+                <canvas id="insertedCard" class="card-inserted" width="200" height="125"></canvas>
+            </div>
+        </div>
+    </div>
+
+    <div class="instructions">
+        <h3>How to use:</h3>
+        <ul>
+            <li><strong>Step 1:</strong> Fill in your card details in the form</li>
+            <li><strong>Step 2:</strong> Click "Generate Card" to create your virtual bank card</li>
+            <li><strong>Step 3:</strong> Click "Insert Card into ATM" to use the card in the ATM</li>
+            <li><strong>Step 4:</strong> In the ATM, enter PIN: <strong>1234</strong></li>
+            <li><strong>Step 5:</strong> Select transaction type and amount</li>
+            <li><strong>Step 6:</strong> Choose whether to print a receipt (will download automatically)</li>
+            <li><strong>Step 7:</strong> Card will be ejected after transaction completion</li>
+            <li><strong>Bonus:</strong> You can download your card image for future use!</li>
+        </ul>
+    </div>
+
+
+    <!-- Load scripts in CORRECT ORDER -->
+    <script src="/src/models/BaseModel.js"></script>
+    <script src="/src/generators/BaseGenerator.js"></script>
+
+    <script src="/src/models/FinancialInstrument.js"></script>
+    <script src="/src/models/Currency.js"></script>
+    <script src="/src/models/Transaction.js"></script>
+
+    <script src="/src/models/Account.js"></script>
+    <script src="/src/models/AtmManager.js"></script>
+
+    <script src="/src/models/Card.js"></script>
+    <script src="/src/models/CurrencyNote.js"></script>
+    <script src="/src/models/Receipt.js"></script>
+
+    <script src="/src/generators/CardGenerator.js"></script>
+
+    <script src="/src/ui/BaseUI.js"></script>
+    <script src="/src/ui/AtmStateManager.js"></script>
+    <script src="/src/ui/AtmMachineUI.js"></script>
+
+    <script src="/src/app.js"></script>
+
+    <!-- Update the inline script -->
+    <script>
+        // Global variables
+        let currentCard = null;
+        let atmInstance = null;
+
+        // Initialize when page loads
+        document.addEventListener('DOMContentLoaded', function () {
+            // Initialize ATM simulator
+            atmInstance = new AtmSimulator();
+
+            // Set default values for card form
+            document.getElementById('cardholderName').value = 'JOHN DOE';
+            document.getElementById('cardNumber').value = '4111 1111 1111 1111';
+            document.getElementById('expiryDate').value = '12/25';
+            document.getElementById('cvv').value = '123';
+
+            // Generate initial card preview
+            generateCard();
+        });
+
+        function generateCard() {
+            const name = document.getElementById('cardholderName').value.toUpperCase();
+            const number = document.getElementById('cardNumber').value;
+            const expiry = document.getElementById('expiryDate').value;
+            const cvv = document.getElementById('cvv').value;
+            const bank = document.getElementById('bankName').value;
+            const type = document.getElementById('cardType').value;
+            const color = document.getElementById('cardColor').value;
+
+            // Generate card using the ATM simulator
+            currentCard = atmInstance.generateCard({
+                cardholderName: name,
+                cardNumber: number.replace(/\s/g, ''),
+                expiryDate: expiry,
+                cvv: cvv,
+                bankName: bank,
+                cardType: type,
+                cardColor: color
+            });
+
+            // Display card preview
+            const canvas = document.getElementById('cardCanvas');
+            const ctx = canvas.getContext('2d');
+
+            // Clear and draw card
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            currentCard.draw(ctx, 0, 0, canvas.width, canvas.height);
+
+            // Show card info
+            document.getElementById('cardInfo').innerHTML = `
+                <strong>${bank}</strong><br>
+                Type: ${type.toUpperCase()} | Color: ${color.replace('gradient-', '').toUpperCase()}<br>
+                Last 4: ${currentCard.getLastFourDigits()}
+            `;
+        }
+
+        function downloadCard() {
+            if (!currentCard) {
+                alert('Please generate a card first!');
+                return;
+            }
+
+            const canvas = document.createElement('canvas');
+            canvas.width = 400;
+            canvas.height = 250;
+            const ctx = canvas.getContext('2d');
+
+            currentCard.draw(ctx, 0, 0, canvas.width, canvas.height);
+
+            // Create download link
+            const link = document.createElement('a');
+            link.download = `bank_card_${currentCard.getLastFourDigits()}.png`;
+            link.href = canvas.toDataURL('image/png');
+
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+
+            alert('Card image downloaded!');
+        }
+
+        function insertCardIntoATM() {
+            if (!currentCard) {
+                alert('Please generate a card first!');
+                return;
+            }
+
+            if (!atmInstance || !atmInstance.atmUI) {
+                alert('ATM not initialized!');
+                return;
+            }
+
+            // Animate card insertion
+            const insertedCardCanvas = document.getElementById('insertedCard');
+            const insertedCtx = insertedCardCanvas.getContext('2d');
+
+            // Draw mini version of card
+            insertedCtx.clearRect(0, 0, insertedCardCanvas.width, insertedCardCanvas.height);
+            currentCard.draw(insertedCtx, 0, 0, insertedCardCanvas.width, insertedCardCanvas.height);
+
+            // Show animation
+            insertedCardCanvas.classList.add('show');
+
+            // Insert card into ATM
+            atmInstance.insertCard(currentCard);
+        }
+    </script>
+</body>
+
+</html>
