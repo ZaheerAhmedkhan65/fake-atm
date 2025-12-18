@@ -3,18 +3,23 @@ class AtmStateManager extends BaseUI {
     constructor(atmUI) {
         super(atmUI.canvas, atmUI.width, atmUI.height);
         this.atmUI = atmUI;
-        this.state = '';
+        this.state = 'welcome';
         this.inputBuffer = '';
         this.selectedTransaction = null;
         this.showReceipt = false;
         this.isCardInserted = false;
         this.insertedCard = null;
+        this.transactionAmount = 0;
     }
 
     setState(state) {
         this.state = state;
         this.inputBuffer = '';
         this.atmUI.draw();
+    }
+
+    setTransactionAmount(amount) {
+        this.transactionAmount = amount;
     }
 
     setCardInserted(isInserted, card = null) {
@@ -27,7 +32,7 @@ class AtmStateManager extends BaseUI {
     getButtonLabels() {
         switch (this.state) {
             case 'welcome':
-                return ['Insert Card', 'Help', 'Cancel'];
+                return ['Ok', 'Help', 'Cancel'];
             case 'pinEntry':
                 return ['Enter', 'Clear', 'Cancel'];
             case 'transactionType':
@@ -58,46 +63,41 @@ class AtmStateManager extends BaseUI {
     }
 
     drawWelcomeScreen() {
-        console.log(this.width, this.height)
         this.drawText('Welcome to', this.width * 0.5, this.height * 0.18, {
-            font: 'bold 28px Arial',
+            font: 'bold 24px Arial',
             align: 'center',
             color: '#000'
         });
 
         this.drawText('Fake Bank ATM', this.width * 0.5, this.height * 0.25, {
-            font: 'bold 24px Arial',
+            font: 'bold 22px Arial',
             align: 'center',
             color: '#000'
         });
 
-        this.drawText('Please insert your card', this.width * 0.5, this.height * 0.35, {
+        this.drawText('Please insert your card', this.width * 0.5, this.height * 0.33, {
             font: '18px Arial',
             align: 'center',
             color: '#000'
         });
-
-        if (!this.isCardInserted) {
-            this.drawText('Click "Insert Card" to begin', this.width * 0.5, this.height * 0.42, {
-                font: 'bold 16px Arial',
-                align: 'center',
-                color: '#3498db'
-            });
-        }
     }
 
     drawPinScreen() {
-        this.drawText('Enter your PIN', this.width * 0.5, this.height * 0.18, {
-            font: 'bold 24px Arial',
-            align: 'center',
-            color: '#000'
-        });
+
+        this.drawText(
+            'Enter your PIN',
+            this.width * 0.5, this.height * 0.18,{ 
+                font: 'bold 22px Arial',
+                align: 'center',
+                color: '#000'
+             }
+        );
 
         // Draw PIN input field
         this.drawRect(
-            this.width * 0.2,
+            this.width * 0.22,
             this.height * 0.25,
-            this.width * 0.6,
+            this.width * 0.56,
             this.height * 0.08,
             '#fff',
             5
@@ -124,18 +124,18 @@ class AtmStateManager extends BaseUI {
         }
 
         // Draw keypad
-        this.atmUI.drawKeypad();
+        // this.atmUI.drawKeypad();
     }
 
     drawTransactionTypeScreen() {
-        this.drawText('Select Transaction', this.width * 0.5, this.height * 0.18, {
-            font: 'bold 24px Arial',
+        this.drawText('Select Transaction', this.width * 0.5, this.height * 0.14, {
+            font: 'bold 22px Arial',
             align: 'center',
             color: '#000'
         });
 
         const balance = this.atmUI.getAtmManager().getBalance();
-        this.drawText(`Balance: $${balance}`, this.width * 0.5, this.height * 0.25, {
+        this.drawText(`Balance: $${balance}`, this.width * 0.5, this.height * 0.20, {
             font: '18px Arial',
             align: 'center',
             color: '#000'
@@ -143,8 +143,8 @@ class AtmStateManager extends BaseUI {
 
         // Draw transaction options
         const options = [
-            { text: 'Deposit', y: 0.35 },
-            { text: 'Withdraw', y: 0.45 }
+            { text: 'Deposit', y: 0.25 },
+            { text: 'Withdraw', y: 0.33 }
         ];
 
         options.forEach(option => {
@@ -153,18 +153,18 @@ class AtmStateManager extends BaseUI {
                 this.width * 0.25,
                 this.height * option.y,
                 this.width * 0.5,
-                this.height * 0.08,
+                this.height * 0.06,
                 '#ddd',
                 8
-            );
+            ); 
 
             // Draw option text
             this.drawText(
                 option.text,
                 this.width * 0.5,
-                this.height * option.y + this.height * 0.04,
+                this.height * option.y + this.height * 0.03,
                 {
-                    font: '22px Arial',
+                    font: '16px Arial',
                     align: 'center',
                     color: '#000',
                     baseline: 'middle'
@@ -176,8 +176,8 @@ class AtmStateManager extends BaseUI {
     drawAmountScreen() {
         const transactionType = this.selectedTransaction === 'deposit' ? 'Deposit' : 'Withdrawal';
 
-        this.drawText(`Enter ${transactionType} Amount`, this.width * 0.5, this.height * 0.18, {
-            font: 'bold 24px Arial',
+        this.drawText(`Enter Amount`, this.width * 0.5, this.height * 0.18, {
+            font: 'bold 22px Arial',
             align: 'center',
             color: '#000'
         });
@@ -195,7 +195,7 @@ class AtmStateManager extends BaseUI {
         // Draw amount
         const displayAmount = this.inputBuffer || '0';
         this.drawText(
-            `$${displayAmount}`,
+            `$ ${displayAmount}`,
             this.width * 0.5,
             this.height * 0.29,
             {
@@ -223,19 +223,19 @@ class AtmStateManager extends BaseUI {
         );
 
         // Draw keypad
-        this.atmUI.drawKeypad();
+        // this.atmUI.drawKeypad();
     }
 
     drawReceiptScreen() {
         this.drawText('Print Receipt?', this.width * 0.5, this.height * 0.18, {
-            font: 'bold 24px Arial',
+            font: 'bold 22px Arial',
             align: 'center',
             color: '#000'
         });
 
         const options = [
-            { text: 'Yes, print receipt', y: 0.3 },
-            { text: 'No receipt', y: 0.4 }
+            { text: 'Yes, print receipt', y: 0.25 },
+            { text: 'No receipt', y: 0.33 }
         ];
 
         options.forEach(option => {
@@ -243,7 +243,7 @@ class AtmStateManager extends BaseUI {
                 this.width * 0.25,
                 this.height * option.y,
                 this.width * 0.5,
-                this.height * 0.08,
+                this.height * 0.06,
                 '#ddd',
                 8
             );
@@ -251,9 +251,9 @@ class AtmStateManager extends BaseUI {
             this.drawText(
                 option.text,
                 this.width * 0.5,
-                this.height * option.y + this.height * 0.04,
+                this.height * option.y + this.height * 0.03,
                 {
-                    font: '20px Arial',
+                    font: '16px Arial',
                     align: 'center',
                     color: '#000',
                     baseline: 'middle'
@@ -264,7 +264,7 @@ class AtmStateManager extends BaseUI {
 
     drawProcessingScreen() {
         this.drawText('Processing...', this.width * 0.5, this.height * 0.2, {
-            font: 'bold 24px Arial',
+            font: 'bold 22px Arial',
             align: 'center',
             color: '#000'
         });
@@ -272,7 +272,7 @@ class AtmStateManager extends BaseUI {
         // Draw spinner
         const time = new Date().getTime() / 1000;
         const centerX = this.width * 0.5;
-        const centerY = this.height * 0.35;
+        const centerY = this.height * 0.32;
         const radius = 25;
 
         this.ctx.save();
@@ -290,28 +290,28 @@ class AtmStateManager extends BaseUI {
     }
 
     drawThankYouScreen() {
-        this.drawText('Thank You!', this.width * 0.5, this.height * 0.2, {
-            font: 'bold 24px Arial',
+        this.drawText('Thank You!', this.width * 0.5, this.height * 0.18, {
+            font: 'bold 22px Arial',
             align: 'center',
             color: '#000'
         });
 
-        this.drawText('Transaction completed successfully', this.width * 0.5, this.height * 0.3, {
-            font: '18px Arial',
+        this.drawText('Transaction completed', this.width * 0.5, this.height * 0.25, {
+            font: '16px Arial',
             align: 'center',
             color: '#000'
         });
 
         if (this.showReceipt) {
-            this.drawText('Receipt has been downloaded', this.width * 0.5, this.height * 0.38, {
-                font: '16px Arial',
+            this.drawText('Receipt has been downloaded', this.width * 0.5, this.height * 0.32, {
+                font: '14px Arial',
                 align: 'center',
                 color: '#27ae60'
             });
         }
 
-        this.drawText('Taking card...', this.width * 0.5, this.height * 0.46, {
-            font: '16px Arial',
+        this.drawText('Ejecting card...', this.width * 0.5, this.height * 0.38, {
+            font: '14px Arial',
             align: 'center',
             color: '#666'
         });
@@ -321,13 +321,14 @@ class AtmStateManager extends BaseUI {
         const { offsetX, offsetY } = event;
 
         // Check if click is on action buttons
-        const buttonWidth = this.width * 0.12;
+        const buttonWidth = this.width * 0.17;
         const buttonHeight = this.height * 0.06;
-        const buttonX = this.width * 0.85;
+        const buttonX = this.width * 0.70;
         const buttonSpacing = this.height * 0.08;
 
+
         for (let i = 0; i < 3; i++) {
-            const buttonY = this.height * 0.1 + (i * buttonSpacing);
+            const buttonY = this.height * 0.55 + (i * buttonSpacing);
 
             if (offsetX >= buttonX && offsetX <= buttonX + buttonWidth &&
                 offsetY >= buttonY && offsetY <= buttonY + buttonHeight) {
@@ -409,6 +410,7 @@ class AtmStateManager extends BaseUI {
                             if (amount >= manager.minDeposit && amount <= manager.maxDeposit) {
                                 manager.deposit(amount);
                                 this.setState('receiptChoice');
+                                this.setTransactionAmount(amount);
                             } else {
                                 alert(`Amount must be between $${manager.minDeposit} and $${manager.maxDeposit}`);
                             }
@@ -416,6 +418,7 @@ class AtmStateManager extends BaseUI {
                             if (amount >= manager.minWithdrawal && amount <= manager.maxWithdrawal) {
                                 if (manager.withdraw(amount)) {
                                     this.setState('receiptChoice');
+                                    this.setTransactionAmount(amount);
                                 } else {
                                     alert('Insufficient funds');
                                 }
@@ -460,55 +463,38 @@ class AtmStateManager extends BaseUI {
     }
 
     handleKeypadClick(x, y) {
-        const keyWidth = this.width * 0.15;
-        const keyHeight = this.height * 0.08;
-        const startX = this.width * 0.2;
-        const startY = this.height * 0.5;
-        const spacing = this.width * 0.05;
+        const keyMap = this.atmUI.keyMap || [];
 
-        const keys = [
-            ['1', '2', '3'],
-            ['4', '5', '6'],
-            ['7', '8', '9'],
-            ['.', '0', '⌫']
-        ];
-
-        for (let row = 0; row < 4; row++) {
-            for (let col = 0; col < 3; col++) {
-                const key = keys[row][col];
-                if (key === '') continue;
-
-                const keyX = startX + (col * (keyWidth + spacing));
-                const keyY = startY + (row * (keyHeight + spacing * 0.4));
-
-                if (x >= keyX && x <= keyX + keyWidth &&
-                    y >= keyY && y <= keyY + keyHeight) {
-
-                    if (key === '⌫') {
-                        // Backspace
-                        this.inputBuffer = this.inputBuffer.slice(0, -1);
-                    } else {
-                        // Number key
-                        if (this.state === 'pinEntry' && this.inputBuffer.length < 4) {
-                            this.inputBuffer += key;
-                        } else if (this.state === 'amountEntry' && this.inputBuffer.length < 6) {
-                            this.inputBuffer += key;
-                        }
+        for (const k of keyMap) {
+            if (
+                x >= k.x &&
+                x <= k.x + k.w &&
+                y >= k.y &&
+                y <= k.y + k.h
+            ) {
+                if (k.key === '⌫') {
+                    this.inputBuffer = this.inputBuffer.slice(0, -1);
+                } else {
+                    if (this.state === 'pinEntry' && this.inputBuffer.length < 4) {
+                        this.inputBuffer += k.key;
+                    } else if (this.state === 'amountEntry' && this.inputBuffer.length < 6) {
+                        this.inputBuffer += k.key;
                     }
-
-                    this.atmUI.draw();
-                    return;
                 }
+
+                this.atmUI.draw();
+                return;
             }
         }
     }
 
     handleTransactionTypeClick(x, y) {
-        const depositY = this.height * 0.35;
-        const withdrawY = this.height * 0.45;
+        const depositY = this.height * 0.25;
+        const withdrawY = this.height * 0.33;
         const boxWidth = this.width * 0.5;
-        const boxHeight = this.height * 0.08;
+        const boxHeight = this.height * 0.06;
         const boxX = this.width * 0.25;
+
 
         if (x >= boxX && x <= boxX + boxWidth) {
             if (y >= depositY && y <= depositY + boxHeight) {
@@ -522,10 +508,10 @@ class AtmStateManager extends BaseUI {
     }
 
     handleReceiptChoiceClick(x, y) {
-        const yesY = this.height * 0.3;
-        const noY = this.height * 0.4;
+        const yesY = this.height * 0.25;
+        const noY = this.height * 0.33;
         const boxWidth = this.width * 0.5;
-        const boxHeight = this.height * 0.08;
+        const boxHeight = this.height * 0.06;
         const boxX = this.width * 0.25;
 
         if (x >= boxX && x <= boxX + boxWidth) {
@@ -546,14 +532,13 @@ class AtmStateManager extends BaseUI {
         setTimeout(() => {
             if (this.showReceipt) {
                 const manager = this.atmUI.getAtmManager();
-                const amount = parseInt(this.inputBuffer) || 0;
+                const amount = parseInt(this.transactionAmount) || 0;
                 const previousBalance = this.selectedTransaction === 'deposit' ?
                     manager.getBalance() - amount : manager.getBalance() + amount;
                 const newBalance = manager.getBalance();
-
                 this.generateAndDownloadReceipt(
                     this.selectedTransaction,
-                    amount,
+                    newBalance,
                     previousBalance,
                     newBalance
                 );

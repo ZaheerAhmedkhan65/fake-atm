@@ -50,6 +50,23 @@ class AtmMachineUI extends BaseUI {
         const w = this.width;
         const h = this.height;
 
+        // Store screen bounds for text rendering
+        this.screenRect = {
+            x: w * 0.18,
+            y: h * 0.20,
+            width: w * 0.64,
+            height: h * 0.18,
+            padding: 14
+        };
+
+        this.keypadRect = {
+            x: w * 0.10,
+            y: h * 0.46,
+            width: w * 0.64,
+            height: h * 0.32
+        };
+
+
         // === OUTER BODY ===
         this.drawRect(0, 0, w, h, this.colors.body, 25);
 
@@ -58,9 +75,9 @@ class AtmMachineUI extends BaseUI {
         this.drawRect(w * 0.92, 0, w * 0.08, h, this.colors.bodyDark);
 
         // === TOP HEADER ===
-        this.drawRect(w * 0.1, h * 0.03, w * 0.8, h * 0.08, this.colors.bodyDark, 15);
-        this.drawText('ATM', w / 2, h * 0.085, {
-            font: 'bold 28px Arial',
+        this.drawRect(0, h * 0, w, h * 0.08, this.colors.bodyDark, 0);
+        this.drawText('FAKE ATM', w / 2, h * 0.04, {
+            font: 'bold 24px Arial',
             color: this.colors.text,
             align: 'center',
             baseline: 'middle'
@@ -69,19 +86,19 @@ class AtmMachineUI extends BaseUI {
         // === SCREEN CAVITY ===
         this.drawRect(
             w * 0.08,
-            h * 0.14,
+            h * 0.08,
             w * 0.84,
-            h * 0.32,
+            h * 0.38,
             this.colors.bodyShadow,
-            20
+            0
         );
 
         // === SCREEN FRAME ===
         this.drawRect(
-            w * 0.15,
-            h * 0.18,
-            w * 0.7,
-            h * 0.22,
+            w * 0.12,
+            h - (h * 0.9),
+            w * 0.76,
+            h * 0.34,
             this.colors.screenFrame,
             12
         );
@@ -89,67 +106,58 @@ class AtmMachineUI extends BaseUI {
         // === SCREEN ===
         this.drawRect(
             w * 0.18,
-            h * 0.2,
+            h - (h * 0.88),
             w * 0.64,
-            h * 0.18,
+            h * 0.3,
             this.colors.screen,
             10
         );
 
         // === SIDE SCREEN BUTTONS ===
         for (let i = 0; i < 4; i++) {
-            this.drawRect(w * 0.14, h * (0.22 + i * 0.04), 8, 16, '#90A4AE', 4);
-            this.drawRect(w * 0.84, h * (0.22 + i * 0.04), 8, 16, '#90A4AE', 4);
+            this.drawRect(w * 0.14, h * (0.2 + i * 0.04), 8, 16, '#90A4AE', 4);
+            this.drawRect(w * 0.84, h * (0.2 + i * 0.04), 8, 16, '#90A4AE', 4);
         }
 
         // === KEYPAD AREA ===
         this.drawRect(
-            w * 0.18,
+            w * 0.10,
             h * 0.46,
-            w * 0.64,
-            h * 0.22,
+            w * 0.80,
+            h * 0.32,
             this.colors.keypad,
             15
-        );
-
-        // === CARD SLOT ===
-        this.drawRect(
-            w * 0.62,
-            h * 0.42,
-            w * 0.18,
-            h * 0.035,
-            this.colors.slot,
-            6
         );
 
         // === CASH SLOT ===
         this.drawRect(
             w * 0.35,
-            h * 0.75,
+            h * 0.85,
             w * 0.3,
-            h * 0.05,
+            h * 0.025,
             this.colors.slot,
             8
         );
 
         // === BOTTOM BRANDING ===
-        this.drawText('ATM', w / 2, h * 0.9, {
-            font: 'bold 34px Arial',
-            color: this.colors.text,
-            align: 'center'
-        });
+        // this.drawText('ATM', w / 2, h * 0.9, {
+        //     font: 'bold 34px Arial',
+        //     color: this.colors.text,
+        //     align: 'center'
+        // });
 
         // Existing features
         this.drawCardSlot();
         this.drawActionButtons();
+        this.drawKeypad();
     }
 
 
     drawCardSlot() {
-        const slotX = this.width * 0.75;
-        const slotY = this.height * 0.4;
-        const slotWidth = this.width * 0.15;
-        const slotHeight = this.height * 0.05;
+        const slotX = this.width * 0.70;
+        const slotY = this.height * 0.5;
+        const slotWidth = this.width * 0.17;
+        const slotHeight = this.height * 0.025;
 
         // Draw card slot
         this.drawRect(slotX, slotY, slotWidth, slotHeight, '#222', 3);
@@ -165,7 +173,7 @@ class AtmMachineUI extends BaseUI {
                 5
             );
 
-            this.drawText('✓ Card Inserted', slotX, slotY - 10, {
+            this.drawText('Inserted', slotX, slotY - 10, {
                 font: '12px Arial',
                 color: '#27ae60',
                 align: 'left'
@@ -180,13 +188,13 @@ class AtmMachineUI extends BaseUI {
     }
 
     drawActionButtons() {
-        const buttonWidth = this.width * 0.12;
+        const buttonWidth = this.width * 0.17;
         const buttonHeight = this.height * 0.06;
-        const buttonX = this.width * 0.85;
+        const buttonX = this.width * 0.70;
         const buttonSpacing = this.height * 0.08;
 
         for (let i = 0; i < 3; i++) {
-            const buttonY = this.height * 0.1 + (i * buttonSpacing);
+            const buttonY = this.height * 0.55 + (i * buttonSpacing);
 
             this.drawRect(
                 buttonX,
@@ -205,7 +213,7 @@ class AtmMachineUI extends BaseUI {
                     buttonX + buttonWidth / 2,
                     buttonY + buttonHeight / 2,
                     {
-                        font: '14px Arial',
+                        font: '12px bold Arial',
                         color: '#fff',
                         align: 'center',
                         baseline: 'middle'
@@ -216,42 +224,47 @@ class AtmMachineUI extends BaseUI {
     }
 
     drawKeypad() {
-        const keyWidth = this.width * 0.15;
-        const keyHeight = this.height * 0.08;
-        const startX = this.width * 0.2;
-        const startY = this.height * 0.5;
-        const spacing = this.width * 0.05;
+        const { x, y, width, height } = this.keypadRect;
+
+        const rows = 4;
+        const cols = 3;
+        const gap = width * 0.04;
+
+        const keyW = (width * 0.9 - gap * (cols + 1)) / cols;
+        const keyH = (height - gap * (rows + 1)) / rows;
 
         const keys = [
             ['1', '2', '3'],
             ['4', '5', '6'],
             ['7', '8', '9'],
-            ['', '0', '⌫']
+            ['.', '0', '⌫']
         ];
 
-        for (let row = 0; row < 4; row++) {
-            for (let col = 0; col < 3; col++) {
-                const key = keys[row][col];
-                if (key === '') continue;
+        this.keyMap = []; // for click detection
 
-                const x = startX + (col * (keyWidth + spacing));
-                const y = startY + (row * (keyHeight + spacing * 0.8));
+        for (let r = 0; r < rows; r++) {
+            for (let c = 0; c < cols; c++) {
+                const key = keys[r][c];
+                if (!key) continue;
 
-                // Draw key
-                this.drawRect(x, y, keyWidth, keyHeight, '#666', 5);
+                const keyX = x + gap + c * (keyW + gap);
+                const keyY = y + gap + r * (keyH + gap);
 
-                // Draw key label
+                this.drawRect(keyX, keyY, keyW, keyH, '#616161', 6);
+
                 this.drawText(
                     key,
-                    x + keyWidth / 2,
-                    y + keyHeight / 2,
+                    keyX + keyW / 2,
+                    keyY + keyH / 2,
                     {
-                        font: key === '⌫' ? 'bold 20px Arial' : 'bold 24px Arial',
+                        font: key === '⌫' ? 'bold 20px Arial' : 'bold 22px Arial',
                         color: '#fff',
                         align: 'center',
                         baseline: 'middle'
                     }
                 );
+
+                this.keyMap.push({ key, x: keyX, y: keyY, w: keyW, h: keyH });
             }
         }
     }

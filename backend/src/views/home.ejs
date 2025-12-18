@@ -1,0 +1,78 @@
+<!-- Home -->
+<div class="container-fluid d-flex flex-column justify-content-center align-items-center min-vh-100 py-5">
+    <div class="text-center mb-5 w-100">
+        <!-- Logo -->
+        <div class="mb-4">
+            <img src="/assets/images/logo.png" alt="Logo" width="256" />
+        </div>
+
+        <!-- Title -->
+        <h1 class="display-5 fw-bold text-primary mb-3">
+            <%= appName %>
+        </h1>
+
+        <!-- Subtitle -->
+        <p class="lead text-muted mb-4">Express MVC Architecture Builder</p>
+
+        <!-- Version Cards -->
+        <div class="row justify-content-center g-3 mb-5">
+            <div class="col-12 col-md-6 col-lg-4">
+                <div class="card border-0 shadow-sm h-100">
+                    <div class="card-body text-center py-4">
+                        <h6 class="card-subtitle mb-2 text-muted">Exp-MVC version</h6>
+                        <h4 class="card-title fw-bold text-primary">
+                            <%= expMvcVersion %>
+                        </h4>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-12 col-md-6 col-lg-4">
+                <div class="card border-0 shadow-sm h-100">
+                    <div class="card-body text-center py-4">
+                        <h6 class="card-subtitle mb-2 text-muted">Express version</h6>
+                        <h4 class="card-title fw-bold text-primary">
+                            <%= expressVersion %>
+                        </h4>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-12 col-md-6 col-lg-4">
+                <div class="card border-0 shadow-sm h-100">
+                    <div class="card-body text-center py-4">
+                        <h6 class="card-subtitle mb-2 text-muted">Node.js version</h6>
+                        <h4 class="card-title fw-bold text-primary">
+                            <%= nodeVersion %>
+                        </h4>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Optional: Quick Info Panel -->
+        <div class="bg-light rounded-3 p-4 shadow-sm">
+            <div class="row text-center">
+                <div class="col-md-4 mb-3 mb-md-0">
+                    <div class="text-muted small">Framework</div>
+                    <div class="fw-semibold">Express MVC</div>
+                </div>
+                <div class="col-md-4 mb-3 mb-md-0">
+                    <div class="text-muted small">Architecture</div>
+                    <div class="fw-semibold">Model-View-Controller</div>
+                </div>
+                <div class="col-md-4">
+                    <div class="text-muted small">Environment</div>
+                    <div class="fw-semibold">Node.js Runtime</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer Note -->
+    <div class="mt-5 text-center">
+        <p class="text-muted small">
+            Built with <i class="bi bi-heart-fill text-danger"></i> using Bootstrap 5
+        </p>
+    </div>
+</div>
