@@ -15,6 +15,7 @@ class AtmSimulator {
             cashSlot: '#7f8c8d',
             buttons: ['#3498db', '#e74c3c', '#2ecc71']
         });
+
     }
 
     generateCard(cardData) {
@@ -24,7 +25,6 @@ class AtmSimulator {
     }
 
     insertCard(card) {
-        console.log('Inserting card into ATM UI');
         this.atmUI.insertCard(card);
     }
 }

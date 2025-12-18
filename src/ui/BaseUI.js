@@ -38,7 +38,7 @@ class BaseUI {
         } else {
             this.ctx.fillRect(x, y, width, height);
         }
-
+        
         this.ctx.restore();
     }
 
@@ -74,5 +74,52 @@ class BaseUI {
         this.ctx.arc(x, y, radius, 0, Math.PI * 2);
         this.ctx.fill();
         this.ctx.restore();
+    }
+
+    drawTextInBox(text, box, options = {}) {
+        const {
+            font = '18px Arial',
+            color = '#000',
+            align = 'center',
+            lineHeight = 24
+        } = options;
+
+        const ctx = this.ctx;
+        const { x, y, width, height, padding } = box;
+
+        ctx.save();
+
+        // CLIP to screen
+        ctx.beginPath();
+        ctx.rect(x, y, width, height);
+        ctx.clip();
+
+        ctx.font = font;
+        ctx.fillStyle = color;
+        ctx.textAlign = align;
+        ctx.textBaseline = 'top';
+
+        const maxWidth = width - padding * 2;
+        const words = text.split(' ');
+        let line = '';
+        let drawY = y + padding;
+
+        for (let i = 0; i < words.length; i++) {
+            const testLine = line + words[i] + ' ';
+            const testWidth = ctx.measureText(testLine).width;
+
+            if (testWidth > maxWidth && line !== '') {
+                ctx.fillText(line, x + width / 2, drawY);
+                line = words[i] + ' ';
+                drawY += lineHeight;
+
+                if (drawY > y + height - lineHeight) break;
+            } else {
+                line = testLine;
+            }
+        }
+
+        ctx.fillText(line, x + width / 2, drawY);
+        ctx.restore();
     }
 }
