@@ -180,35 +180,19 @@ class Receipt {
             y += 25;
         });
 
-        // Separator
-        this.drawSeparator(ctx, y + 10, canvas.width);
-        y += 30;
-
         // Items if any
         if (this.items.length > 0) {
-            ctx.font = 'bold 16px Arial';
-            ctx.fillText('ITEMS:', 40, y);
-            y += 25;
-
-            ctx.font = '14px Arial';
-            this.items.forEach(item => {
-                ctx.fillText(item.name, 40, y);
-                ctx.textAlign = 'right';
-                ctx.fillText(`$${item.price.toFixed(2)}`, canvas.width - 40, y);
-                ctx.textAlign = 'left';
-                y += 20;
-            });
 
             this.drawSeparator(ctx, y, canvas.width);
             y += 20;
 
             // Total
             ctx.font = 'bold 16px Arial';
-            ctx.fillText('TOTAL:', 40, y);
+            ctx.fillText('Current Balance:', 40, y);
             ctx.textAlign = 'right';
-            ctx.fillText(`$${this.getTotal().toFixed(2)}`, canvas.width - 40, y);
+            ctx.fillText(`$${newBalance.toFixed(2)}`, canvas.width - 40, y);
             ctx.textAlign = 'left';
-            y += 30;
+            y += 20;
         }
 
         // Totals section
@@ -231,18 +215,14 @@ class Receipt {
             y += 25;
         }
 
-        // Final separator
-        this.drawSeparator(ctx, y, canvas.width);
-        y += 30;
-
         // Footer message
         ctx.textAlign = 'center';
         ctx.font = 'italic 14px Arial';
         ctx.fillStyle = '#666';
         ctx.fillText('Please retain this receipt for your records', canvas.width / 2, y);
-        y += 25;
+        y += 20;
         ctx.fillText('Thank you for banking with us!', canvas.width / 2, y);
-        y += 25;
+        y += 20;
         ctx.font = '12px Arial';
         ctx.fillText('For assistance: 1-800-FAKE-BANK', canvas.width / 2, y);
         y += 20;
@@ -265,7 +245,7 @@ class Receipt {
     }
 
     addSecurityFeatures(ctx, canvas) {
-        // Add watermark
+        // Watermark (unchanged)
         ctx.globalAlpha = 0.1;
         ctx.font = 'bold 60px Arial';
         ctx.fillStyle = '#000';
@@ -277,12 +257,43 @@ class Receipt {
         ctx.restore();
         ctx.globalAlpha = 1.0;
 
-        // Add security pattern at bottom
-        ctx.fillStyle = '#f0f0f0';
-        for (let i = 0; i < canvas.width; i += 20) {
-            ctx.fillRect(i, canvas.height - 20, 10, 10);
+        /* ---------- SECURITY PATTERN ---------- */
+        const size = 10;
+
+        // Top & Bottom
+        const horizontalCount = Math.floor(canvas.width / size);
+        for (let i = 0; i < horizontalCount; i++) {
+            
+            ctx.fillStyle = i % 2 === 0 ? '#edf043ff' : '#f0f0f0';
+
+            // Top
+            let x = i * size;
+            ctx.fillRect(x, 0, size, size);
+
+            // Bottom
+            x = (i + 1) * size;
+            ctx.fillRect(x, canvas.height - size, size, size);
+        }
+
+        // Left & Right (skip top & bottom corners)
+        const verticalCount = Math.floor(canvas.height / size);
+        for (let i = 1; i < verticalCount - 1; i++) {
+            // Skip corners
+
+            // Offset parity to keep alternation continuous
+            ctx.fillStyle = i % 2 === 0 ? '#edf043ff' : '#f0f0f0'
+
+            // Left
+            let y = i * size;
+            ctx.fillRect(0, y, size, size);
+
+            ctx.fillStyle = i % 2 === 0 ? '#f0f0f0' : '#edf043ff';
+
+            // Right
+            ctx.fillRect(canvas.width - size, y, size, size);
         }
     }
+
 
     // Method to download the receipt as PNG
     downloadReceipt(transactionType, amount, previousBalance, newBalance, filename = 'atm_receipt') {

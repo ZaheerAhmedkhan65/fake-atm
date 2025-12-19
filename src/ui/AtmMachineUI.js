@@ -165,15 +165,15 @@ class AtmMachineUI extends BaseUI {
         if (this.currentCard) {
             // Draw inserted card
             this.drawRect(
-                slotX - this.width * 0.02,
-                slotY - this.height * 0.01,
-                slotWidth * 0.8,
+                slotX + this.width * 0.01,
+                slotY - this.height * 0.02,
+                slotWidth - this.width * 0.02,
                 slotHeight * 1.4,
                 '#1a2980',
                 5
             );
 
-            this.drawText('Inserted', slotX, slotY - 10, {
+            this.drawText('Inserted', slotX + this.width * 0.01, slotY - 10, {
                 font: '12px Arial',
                 color: '#27ae60',
                 align: 'left'
