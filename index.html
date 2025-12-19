@@ -84,7 +84,6 @@
             <div class="card-slot">
                 <label>Insert Card into ATM:</label>
                 <button class="btn" onclick="insertCardIntoATM()">Insert Card into ATM</button>
-                <canvas id="insertedCard" class="card-inserted" width="200" height="125"></canvas>
             </div>
         </div>
     </div>
@@ -156,7 +155,6 @@
             const bank = document.getElementById('bankName').value;
             const type = document.getElementById('cardType').value;
             const color = document.getElementById('cardColor').value;
-
             // Generate card using the ATM simulator
             currentCard = atmInstance.generateCard({
                 cardholderName: name,
@@ -219,17 +217,6 @@
                 alert('ATM not initialized!');
                 return;
             }
-
-            // Animate card insertion
-            const insertedCardCanvas = document.getElementById('insertedCard');
-            const insertedCtx = insertedCardCanvas.getContext('2d');
-
-            // Draw mini version of card
-            insertedCtx.clearRect(0, 0, insertedCardCanvas.width, insertedCardCanvas.height);
-            currentCard.draw(insertedCtx, 0, 0, insertedCardCanvas.width, insertedCardCanvas.height);
-
-            // Show animation
-            insertedCardCanvas.classList.add('show');
 
             // Insert card into ATM
             atmInstance.insertCard(currentCard);

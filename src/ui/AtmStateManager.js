@@ -538,7 +538,7 @@ class AtmStateManager extends BaseUI {
                 const newBalance = manager.getBalance();
                 this.generateAndDownloadReceipt(
                     this.selectedTransaction,
-                    newBalance,
+                    amount,
                     previousBalance,
                     newBalance
                 );
